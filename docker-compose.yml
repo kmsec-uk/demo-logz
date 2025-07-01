@@ -1,0 +1,6 @@
+services:
+  server:
+    build: .
+    container_name: panel
+    environment:
+      - AUTH_HEADER=your_value_here

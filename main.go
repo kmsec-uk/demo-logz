@@ -8,13 +8,18 @@ Created to demonstrate the risk of infostealers
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
 	"time"
 )
+
+//go:embed static/*
+var content embed.FS
 
 type Rdata map[string]any
 
@@ -97,9 +102,11 @@ func main() {
 		w.Write([]byte("cleared\n"))
 
 	})
-	// static content
-	fs := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fs)
+	contentStatic, err := fs.Sub(content, "static")
+	if err != nil {
+		log.Fatal(err)
+	}
+	http.Handle("/", http.FileServer(http.FS(contentStatic)))
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

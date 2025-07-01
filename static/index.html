@@ -2,11 +2,11 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <meta name="color-scheme" content="light dark"/>
-  <link rel="icon" href="/favicon.svg"/>
-  <link rel="stylesheet" href="/pico.min.css"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="/favicon.svg" />
+  <link rel="stylesheet" href="/pico.min.css" />
   <title>Demo logz panel</title>
 </head>
 
@@ -25,26 +25,26 @@
     </div>
 
     <article id="error"></article>
-    <div id="results">
+    <div id="results" style="margin-top:1rem;margin-bottom:1rem;">Enter token and hit refresh
     </div>
-          <article>
+    <article>
 
-    <details open>
-  <summary>How to use</summary>
-  <p>
-    This application comes with three HTTP JSON endpoints:  </p>
-  <ul>
-    <li><kbd>/view</kbd> View the data</li>
-    <li><kbd>/send</kbd> Send the data (JSON format)</li>
-    <li><kbd>/clear</kbd> Clear the data</li>
+      <details open>
+        <summary>How to use</summary>
+        <p>
+          This application comes with three HTTP JSON endpoints: </p>
+        <ul>
+          <li><kbd>/view</kbd> View the data</li>
+          <li><kbd>/send</kbd> Send the data (JSON format)</li>
+          <li><kbd>/clear</kbd> Clear the data</li>
 
-  </ul>
-  <p>All endpoints use the same authentication token, which is set when running the server:</p>
-  <pre><code>AUTH_HEADER="foo" go run main.go</code></pre>
-  <p>Not very secure, but it's a demo!</p>
-  <p>Source on <a href="https://github.com/kmsec-uk/demo-logz">GitHub</a></p>
-</article>
-</details>
+        </ul>
+        <p>All endpoints use the same authentication token, which is set when running the server:</p>
+        <pre><code>AUTH_HEADER="foo" go run main.go</code></pre>
+        <p>Not very secure, but it's a demo!</p>
+        <p>Source on <a href="https://github.com/kmsec-uk/demo-logz">GitHub</a></p>
+    </article>
+    </details>
   </main>
 
 </body>
@@ -76,6 +76,8 @@
 
   /* Populate content container with article elements*/
   function populateContent(data) {
+    // clear
+    contentContainer.textContent = ""
     // reverse chronological order
     data.sort((a, b) => b.timestamp - a.timestamp)
     for (const item of data) {
@@ -120,6 +122,7 @@
     if (!res.ok) {
       errContainer.textContent = `${res.status} ${res.statusText}`
     }
+    contentContainer.textContent = ""
     clearBtn.setAttribute("aria-busy", "false")
   })
 </script>
