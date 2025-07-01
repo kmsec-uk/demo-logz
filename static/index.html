@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <link rel="icon" href="/favicon.svg"/>
+  <link rel="stylesheet" href="/pico.min.css"/>
+  <title>Demo logz panel</title>
+</head>
+
+<body>
+  <main class="container">
+    <hgroup>
+      <h1>Demo logz panel</h1>
+      <p>Ur data haz been stolen</p>
+    </hgroup>
+    <label>Admin authentication token
+      <input type="password" id="auth" name="auth" placeholder="authentication" />
+    </label>
+    <div class="grid">
+      <button class="secondary" id="refresh">Refresh</button>
+      <button class="contrast" id="clear">Clear</button>
+    </div>
+
+    <article id="error"></article>
+    <div id="results">
+    </div>
+          <article>
+
+    <details open>
+  <summary>How to use</summary>
+  <p>
+    This application comes with three HTTP JSON endpoints:  </p>
+  <ul>
+    <li><kbd>/view</kbd> View the data</li>
+    <li><kbd>/send</kbd> Send the data (JSON format)</li>
+    <li><kbd>/clear</kbd> Clear the data</li>
+
+  </ul>
+  <p>All endpoints use the same authentication token, which is set when running the server:</p>
+  <pre><code>AUTH_HEADER="foo" go run main.go</code></pre>
+  <p>Not very secure, but it's a demo!</p>
+  <p>Source on <a href="https://github.com/kmsec-uk/demo-logz">GitHub</a></p>
+</article>
+</details>
+  </main>
+
+</body>
+<template id="templateHead">
+  <thead>
+    <tr>
+      <td>Key</td>
+      <td>Value</td>
+    </tr>
+  </thead>
+</template>
+<template id="templateRow">
+  <tr>
+    <td></td>
+    <td></td>
+  </tr>
+</template>
+
+<script>
+  var auth = document.getElementById("auth")
+  var refreshBtn = document.getElementById("refresh")
+  var clearBtn = document.getElementById("clear")
+  var errContainer = document.getElementById("error")
+
+  var contentContainer = document.getElementById("results")
+
+  var templateHead = document.getElementById("templateHead")
+  var templateRow = document.getElementById("templateRow")
+
+  /* Populate content container with article elements*/
+  function populateContent(data) {
+    // reverse chronological order
+    data.sort((a, b) => b.timestamp - a.timestamp)
+    for (const item of data) {
+      var art = document.createElement("article")
+
+      var head = document.createElement("header")
+      head.textContent = new Date(item.timestamp).toISOString().split("T").join(" ")
+      art.appendChild(head)
+      var table = document.createElement("table")
+
+      table.appendChild(templateHead.content.cloneNode(true))
+
+      for (const [key, value] of Object.entries(item.data)) {
+        var clone = templateRow.content.cloneNode(true)
+        let td = clone.querySelectorAll("td")
+        td[0].textContent = key
+        td[1].textContent = value
+        table.appendChild(clone)
+      }
+      art.appendChild(table)
+      contentContainer.appendChild(art)
+    }
+  }
+
+  refreshBtn.addEventListener("click", async (e) => {
+    errContainer.textContent = ""
+    refreshBtn.setAttribute("aria-busy", "true")
+
+    var res = await fetch("/view", { headers: { "authorization": auth.value } })
+    if (!res.ok) {
+      errContainer.textContent = `${res.status} ${res.statusText}`
+    }
+    refreshBtn.setAttribute("aria-busy", "false")
+    populateContent(await res.json())
+  })
+
+  clearBtn.addEventListener("click", async (e) => {
+    errContainer.textContent = ""
+    clearBtn.setAttribute("aria-busy", "true")
+
+    var res = await fetch("/clear", { headers: { "authorization": auth.value } })
+    if (!res.ok) {
+      errContainer.textContent = `${res.status} ${res.statusText}`
+    }
+    clearBtn.setAttribute("aria-busy", "false")
+  })
+</script>
+
+</html>
