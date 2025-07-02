@@ -5,8 +5,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
-  <link rel="icon" href="/favicon.svg" />
-  <link rel="stylesheet" href="/pico.min.css" />
+  <link rel="icon" href="favicon.svg" />
+  <link rel="stylesheet" href="pico.min.css" />
   <title>Demo logz panel</title>
 </head>
 
@@ -29,18 +29,19 @@
     </div>
     <article>
 
-      <details open>
+      <details>
         <summary>How to use</summary>
         <p>
           This application comes with three HTTP JSON endpoints: </p>
         <ul>
-          <li><kbd>/view</kbd> View the data</li>
-          <li><kbd>/send</kbd> Send the data (JSON format)</li>
-          <li><kbd>/clear</kbd> Clear the data</li>
-
+          <li><kbd>GET /view</kbd> View the data</li>
+          <li><kbd>POST /send</kbd> Send the data (JSON format)</li>
+          <li><kbd>GET /clear</kbd> Clear the data</li>
         </ul>
         <p>All endpoints use the same authentication token, which is set when running the server:</p>
         <pre><code>AUTH_HEADER="foo" go run main.go</code></pre>
+        <p>Requests to these endpoints must use the "authorization" header:</p>
+        <pre><code>curl -H "authorization: foo" -d '{"some" : "thing"}' localhost:8080/send</code></pre>
         <p>Not very secure, but it's a demo!</p>
         <p>Source on <a href="https://github.com/kmsec-uk/demo-logz">GitHub</a></p>
     </article>
@@ -106,7 +107,7 @@
     errContainer.textContent = ""
     refreshBtn.setAttribute("aria-busy", "true")
 
-    var res = await fetch("/view", { headers: { "authorization": auth.value } })
+    var res = await fetch("view", { headers: { "authorization": auth.value } })
     if (!res.ok) {
       errContainer.textContent = `${res.status} ${res.statusText}`
     }
@@ -118,7 +119,7 @@
     errContainer.textContent = ""
     clearBtn.setAttribute("aria-busy", "true")
 
-    var res = await fetch("/clear", { headers: { "authorization": auth.value } })
+    var res = await fetch("clear", { headers: { "authorization": auth.value } })
     if (!res.ok) {
       errContainer.textContent = `${res.status} ${res.statusText}`
     }
