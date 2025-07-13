@@ -1,0 +1,2 @@
+// an example javascript for evaluating remote content
+const fs = require('fs'); fs.writeFileSync('./pwned', 'You got pwned.\n');

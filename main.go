@@ -110,6 +110,6 @@ func main() {
 		log.Fatal(err)
 	}
 	http.Handle("/", http.FileServer(http.FS(contentStatic)))
-
+	log.Println("listening on 0.0.0.0:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
