@@ -24,13 +24,15 @@ var content embed.FS
 type Rdata map[string]any
 
 type Payload struct {
-	Timestamp int64 `json:"timestamp"`
-	Data      Rdata `json:"data"`
+	Timestamp int64  `json:"timestamp"`
+	UserAgent string `json:"useragent"`
+	Data      Rdata  `json:"data"`
 }
 
-func newPayload(data map[string]any) *Payload {
+func newPayload(data map[string]any, useragent string) *Payload {
 	return &Payload{
 		Timestamp: time.Now().UnixMilli(),
+		UserAgent: useragent,
 		Data:      data,
 	}
 }
@@ -65,9 +67,10 @@ func main() {
 			w.Write([]byte("server error\n"))
 			return
 		}
+		ua := r.Header.Get("user-agent")
 		log.Printf("%s: %s: accepted payload", r.URL, r.RemoteAddr)
 
-		recieved = append(recieved, newPayload(j))
+		recieved = append(recieved, newPayload(j, ua))
 		w.Write([]byte("received\n"))
 	})
 	// View collected data

@@ -85,7 +85,8 @@
       var art = document.createElement("article")
 
       var head = document.createElement("header")
-      head.textContent = new Date(item.timestamp).toISOString().split("T").join(" ")
+      head.textContent = new Date(item.timestamp).toISOString().split("T").join(" ").split(".")[0]
+      head.textContent += " (" + item.useragent + ")"
       art.appendChild(head)
       var table = document.createElement("table")
 
